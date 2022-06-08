@@ -1,0 +1,265 @@
+{% extends 'admin/base_site.html' %}
+{% block content %}
+<h1 class="text-center text-info" style="margin: 25px">THỐNG KÊ DANH SÁCH CÁC TOUR</h1>
+
+<div class="row">
+    <div class="col-md-6 col-xs-12 " style="padding-top: "100px">
+        <table class="table">
+            <tr>
+                <th>Tour trong nước</th>
+                <th>Tour ngoài nước</th>
+            </tr>
+
+            <tr>
+                {% for s in count_tour %}
+                <td>{{ s.dcount }}</td>
+                {% endfor %}
+            </tr>
+
+        </table>
+    </div>
+    <div class="col-md-6 col-xs-12">
+        <h2>Danh sách tour hiện có</h2>
+        <table class="table">
+            <tr>
+                <th>Tên chuyến đi</th>
+                <th>Giá</th>
+                <th>Loại hình chuyến đi</th>
+                <th>Ngày tạo</th>
+                <th>Ngày cập nhật</th>
+            </tr>
+            {% for d in tour_all %}
+            <tr>
+                <td>{{ d.name_tour }}</td>
+                <td>{{ d.price_of_tour }}</td>
+                {% if d.category_id == 1 %}
+                    <td>Trong nước</td>
+                    {% else %}
+                    <td>Ngoài nước</td>
+                {% endif %}
+                <td>{{ d.created_date }}</td>
+                <td>{{ d.updated_date }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+<!--    chartjs-->
+    <div  >
+        <canvas id="myChart", style="height: 50px"></canvas>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script >
+            let data =[]
+            let labels = []
+
+             {% for s in count_tour %}
+                data.push({{s.dcount}})
+            {% endfor %}
+
+            window.onload =function()
+            {
+                const ctx = document.getElementById('myChart');
+                const myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Trong nước','Ngoài nước'],
+                    datasets: [{
+                        label: 'Thống kê danh sách tour',
+                        data: data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            }
+        </script>
+    </div>
+    <div>
+        <script>
+    $(document).ready(function(){
+      $("#r-year").click(function(){
+        $("#year").show();
+        $("#month").hide();
+      });
+      $("#r-month").click(function(){
+        $("#year").show();
+        $("#month").show();
+      });
+    });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#dataTable').DataTable();
+        });
+    </script>
+
+    <script>
+        $(function () {
+            /* ChartJS */
+            'use strict';
+            if ($("#barChart").length) {
+                var barChartCanvas = $("#barChart").get(0).getContext("2d");
+                var barChart = new Chart(barChartCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: {{ label }},
+                        datasets: [{
+                            label: 'Doanh thu',
+                            data: {{ data }},
+                            backgroundColor: ChartColor[0],
+                            borderColor: ChartColor[0],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        layout: {
+                            padding: {
+                                left: 0,
+                                right: 0,
+                                top: 0,
+                                bottom: 0
+                            }
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: '{{ lx }}',
+                                    fontSize: 12,
+                                    lineHeight: 2
+                                },
+                                ticks: {
+                                    fontColor: '#bfccda',
+                                    stepSize: 50,
+                                    min: 0,
+                                    max: 150,
+                                    autoSkip: true,
+                                    autoSkipPadding: 15,
+                                    maxRotation: 0,
+                                    maxTicksLimit: 10
+                                },
+                                gridLines: {
+                                    display: false,
+                                    drawBorder: false,
+                                    color: 'transparent',
+                                    zeroLineColor: '#eeeeee'
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Doanh thu (VND)',
+                                    fontSize: 12,
+                                    lineHeight: 2
+                                },
+                                ticks: {
+                                    display: true,
+                                    autoSkip: false,
+                                    maxRotation: 0,
+                                    fontColor: '#bfccda',
+                                    stepSize: 500000,
+                                    min: 0,
+                                    max: {{ c }}
+                                },
+                                gridLines: {
+                                    drawBorder: false
+                                }
+                            }]
+                        },
+                        legend: {
+                            display: false
+                        },
+                        legendCallback: function (chart) {
+                            var text = [];
+                            text.push('<div class="chartjs-legend"><ul>');
+                            for (var i = 0; i < chart.data.datasets.length; i++) {
+                                console.log(chart.data.datasets[i]); // see what's inside the obj.
+                                text.push('<li>');
+                                text.push('<span style="background-color:' + chart.data.datasets[i].backgroundColor + '">' + '</span>');
+                                text.push(chart.data.datasets[i].label);
+                                text.push('</li>');
+                            }
+                            text.push('</ul></div>');
+                            return text.join("");
+                        },
+                        elements: {
+                            point: {
+                                radius: 0
+                            }
+                        }
+                    }
+                });
+                document.getElementById('bar-traffic-legend').innerHTML = barChart.generateLegend();
+            }
+        });
+    </script>
+    </div>
+
+
+<h1>alo</h1>
+<ul class="list-group">
+        <li class="list-group-item">
+            <div class="container-fluid">
+                <h1 class="h3 mb-2 text-gray-800">Báo cáo tour</h1>
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary"></h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <tr>
+                                        <th>Tên tour</th>
+                                        <th>Ngày khởi hành</th>
+                                        <th>Rating</th>
+                                        <th>Giá tour</th>
+                                    </tr>
+
+                                    <tr>
+                                        {% for t in tours %}
+                                        <td>{{ t.tour_name }}</td>
+                                        <td>{{ t.depart_date }}</td>
+                                        <td>{{ t.rating }}</td>
+                                        <td>{{ t.price_of_tour }}</td>
+                                        {% endfor %}
+                                    </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </li>
+    </ul>
+
+
+{% endblock %}

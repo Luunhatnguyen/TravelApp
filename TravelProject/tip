@@ -1,0 +1,21 @@
+/////// Create staff user
+python manage.py shell
+from travelapp.models import *
+
+user = User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
+user.is_staff=True
+user.save()
+
+/// Image tour detail
+<Col md={4} xs={12}>
+    <Image src={"http://127.0.0.1:8000/" + tour.imageTour} style={{width:'500px', height: '557px'}} rounded fluid />
+</Col>
+-cái phần "http://127.0.0.1:8000/" lưu ý
+
+////Còn phải làm
+- Tạo trang admin để sử dụng API thêm sửa xóa ---/ done
+- Khách hàng đặt tour du lịch (giá tour phân biệt người lớn/trẻ em, giá có thể linh hoạt
+thay đổi) --/ done
+- Thanh toán trực tuyến
+- Dùng trang admin để thống kê báo cáo, doanh thu theo ticket  ---/ nguyen
+- Đăng nhập bằng gmail, facebook
